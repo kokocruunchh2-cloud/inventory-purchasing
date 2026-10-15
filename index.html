@@ -3,6 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kontrol Inventory</title>
 <style>
+#sync-status{display:inline-block;font-size:12px;opacity:.85;margin-left:8px}body{min-height:100vh}
 :root{--bg:#E7E1CF;--sf:#F7F3E8;--inp:#FCFAF3;--th:#EDE6D1;--tx:#2A2216;--mu:#6F6450;--bd:#D3CAB0;--ac:#4B5E24;--onac:#F7F3E8;--acs:#DDE3C2;--cl:#B0532D;--oc:#B9831A;--rd:#9B2D1F;--rds:#F2D9D0;--am:#8A5A00;--ams:#F4E3B8;--gr:#3F6B26;--grs:#DCE8C6;--hd:#2E3A1A;--hdt:#F1EBD6;--navbg:#D9D1B8;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1B1912;--sf:#26231A;--inp:#1F1D15;--th:#302D20;--tx:#EEE7D3;--mu:#A79D83;--bd:#3A3626;--ac:#A8BE62;--onac:#1B1912;--acs:#363D1F;--cl:#E08A5F;--oc:#E2B04C;--rd:#FF9A86;--rds:#47241D;--am:#F0C469;--ams:#3F3217;--gr:#B2D47A;--grs:#2C3A1C;--hd:#2A3516;--hdt:#EFE8D1;--navbg:#2F2C1F;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#1B1912;--sf:#26231A;--inp:#1F1D15;--th:#302D20;--tx:#EEE7D3;--mu:#A79D83;--bd:#3A3626;--ac:#A8BE62;--onac:#1B1912;--acs:#363D1F;--cl:#E08A5F;--oc:#E2B04C;--rd:#FF9A86;--rds:#47241D;--am:#F0C469;--ams:#3F3217;--gr:#B2D47A;--grs:#2C3A1C;--hd:#2A3516;--hdt:#EFE8D1;--navbg:#2F2C1F;color-scheme:dark}
@@ -55,8 +56,8 @@ tr.lk{cursor:pointer}tr.lk:hover td{background:var(--acs)}
 @media (max-width:560px){.kpis{grid-template-columns:repeat(2,1fr);gap:10px}.kpi{padding:11px 12px}.kpi span{font-size:12px}.hero{padding:20px 18px}.mark{width:42px;height:42px;border-radius:13px}.card{padding:14px}}
 @media (prefers-reduced-motion:no-preference){.alert{animation:p 1.6s 2}@keyframes p{50%{opacity:.6}}}
 </style>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Figtree:wght@400;500;600&display=swap"><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script></head><body><div class="wrap">
-<header class="hero"><div class="brand"><div class="mark" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#F7F3E8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M14 3 4 8v12l10 5 10-5V8z"/><path d="M4 8l10 5 10-5M14 13v12"/></svg></div><div><h1>Kontrol Inventory</h1><p class="hsum" id="hsum">Stok, faktur, dan jatuh tempo dalam satu layar</p></div></div><div><button class="btn s" onclick="demo()">Muat contoh data</button> <button class="btn x" onclick="reset()">Hapus semua</button></div></header>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Figtree:wght@400;500;600&display=swap"><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><section id="auth-panel" style="max-width:460px;margin:8vh auto;padding:24px"><div class="card"><h1 style="font-family:Georgia,serif;margin-top:0">Kontrol Inventory</h1><p class="mu">Masuk atau buat akun untuk menyimpan data inventaris pribadi dan menyinkronkannya antarperangkat.</p><div style="margin:16px 0"><label>Email</label><input id="auth-email" type="email" autocomplete="email" placeholder="nama@email.com"></div><div style="margin:16px 0"><label>Password</label><input id="auth-password" type="password" autocomplete="current-password" placeholder="Minimal 6 karakter"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="authLogin()">Masuk</button><button class="btn s" onclick="authSignup()">Buat akun</button></div><p id="auth-msg" class="mu" role="status" style="margin-top:14px"></p><p class="mu" style="font-size:12px">Setiap akun memiliki data sendiri. Jangan bagikan password Anda.</p></div></section><div class="wrap" id="app-wrap" style="display:none">
+<header class="hero"><div class="brand"><div class="mark" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#F7F3E8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M14 3 4 8v12l10 5 10-5V8z"/><path d="M4 8l10 5 10-5M14 13v12"/></svg></div><div><h1>Kontrol Inventory</h1><p class="hsum" id="hsum">Stok, faktur, dan jatuh tempo dalam satu layar</p></div></div><div><span id="user-email" style="font-size:13px;opacity:.9"></span><span id="sync-status">Menunggu sinkronisasi</span> <button class="btn s" onclick="exportBackup()">Cadangkan JSON</button> <button class="btn s" onclick="demo()">Muat contoh data</button> <button class="btn x" onclick="reset()">Hapus semua</button> <button class="btn s" onclick="authLogout()">Keluar</button></div></header>
 <div id="alerts"></div>
 <nav id="nav"></nav>
 
@@ -115,11 +116,117 @@ tr.lk{cursor:pointer}tr.lk:hover td{background:var(--acs)}
 </div>
 <script>
 var KEY="inv_v1",S={faktur:[],moves:[]},TAB="dash";
-try{var r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){}
-function cashQ(t,d){return!!t&&!!d&&d<=t}
-function ens(){S.cfg=S.cfg||{pct:25,days:14};S.min=S.min||{};if(!S.cashfix){(S.faktur||[]).forEach(function(f){if(cashQ(f.tgl,f.due))f.lunas=true});S.cashfix=1}}ens();
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+var SUPABASE_URL="https://vwgntvjwjllfdhxpphqy.supabase.co";
+var SUPABASE_PUBLISHABLE_KEY="sb_publishable_CyScLv3A_apAXZwcC9h1Tg_bKeU0hnw";
+var sb=null,currentUser=null,saveTimer=null,loadingCloud=false,appInitialized=false,sessionGeneration=0;
 var $=function(i){return document.getElementById(i)};
+function cashQ(t,d){return!!t&&!!d&&d<=t}
+function ens(){S.cfg=S.cfg||{pct:25,days:14};S.min=S.min||{};if(!S.cashfix){(S.faktur||[]).forEach(function(f){if(cashQ(f.tgl,f.due))f.lunas=true});S.cashfix=1}}
+function userKey(){return KEY+"_"+(currentUser?currentUser.id:"signed_out")}
+function save(){
+  try{if(currentUser)localStorage.setItem(userKey(),JSON.stringify(S))}catch(e){}
+  if(!currentUser||loadingCloud)return;
+  if(saveTimer)clearTimeout(saveTimer);
+  saveTimer=setTimeout(cloudSave,700);
+}
+async function cloudSave(){
+  if(!currentUser||!sb||loadingCloud)return;
+  var uid=currentUser.id, snapshot=JSON.parse(JSON.stringify(S));
+  var result=await sb.from("app_data").upsert({
+    user_id:uid,data:snapshot,updated_by:uid,updated_at:new Date().toISOString()
+  },{onConflict:"user_id"});
+  if(result.error){
+    console.error("Gagal menyimpan ke Supabase:",result.error);
+    var el=$("sync-status");if(el)el.textContent="Belum tersinkron — "+result.error.message;
+  }else{
+    var el2=$("sync-status");if(el2)el2.textContent="Tersinkron ke cloud";
+  }
+}
+function setAuthMessage(msg,isError){var el=$("auth-msg");if(el){el.textContent=msg;el.className=isError?"err":"mu"}}
+function authClientReady(){
+  if(!window.supabase){setAuthMessage("Koneksi Supabase belum termuat. Periksa internet lalu muat ulang halaman.",true);return false}
+  if(!SUPABASE_PUBLISHABLE_KEY||SUPABASE_PUBLISHABLE_KEY==="TEMPEL_PUBLISHABLE_KEY_DI_SINI"){
+    setAuthMessage("Konfigurasi belum lengkap: masukkan Supabase Publishable key ke file index.html.",true);return false
+  }
+  if(!sb)sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+  return true;
+}
+async function authLogin(){
+  if(!authClientReady())return;
+  var email=$("auth-email").value.trim(),password=$("auth-password").value;
+  if(!email||!password){setAuthMessage("Isi email dan password dulu.",true);return}
+  setAuthMessage("Sedang masuk…",false);
+  var r=await sb.auth.signInWithPassword({email:email,password:password});
+  if(r.error)setAuthMessage(r.error.message,true);
+}
+async function authSignup(){
+  if(!authClientReady())return;
+  var email=$("auth-email").value.trim(),password=$("auth-password").value;
+  if(!email||!password){setAuthMessage("Isi email dan password dulu.",true);return}
+  if(password.length<6){setAuthMessage("Password minimal 6 karakter.",true);return}
+  setAuthMessage("Sedang membuat akun…",false);
+  var r=await sb.auth.signUp({email:email,password:password});
+  if(r.error){setAuthMessage(r.error.message,true);return}
+  if(r.data.session){setAuthMessage("Akun berhasil dibuat.",false)}
+  else{setAuthMessage("Akun dibuat. Jika konfirmasi email aktif, buka email Anda lalu klik tautannya untuk mengaktifkan akun.",false)}
+}
+async function authLogout(){
+  if(saveTimer){clearTimeout(saveTimer);saveTimer=null;await cloudSave()}
+  if(sb)await sb.auth.signOut();
+  currentUser=null;S={faktur:[],moves:[]};$("app-wrap").style.display="none";$("auth-panel").style.display="block";
+  setAuthMessage("Anda sudah keluar.",false);
+}
+async function loadUserData(user){
+  var gen=++sessionGeneration;currentUser=user;loadingCloud=true;
+  $("auth-panel").style.display="none";$("app-wrap").style.display="block";
+  $("user-email").textContent=user.email||"Akun masuk";
+  var result=await sb.from("app_data").select("data").eq("user_id",user.id).maybeSingle();
+  if(gen!==sessionGeneration)return;
+  if(result.error){
+    loadingCloud=false;
+    $("app-wrap").style.display="none";$("auth-panel").style.display="block";
+    setAuthMessage("Gagal membaca data cloud: "+result.error.message+". Periksa SQL tabel dan kebijakan RLS.",true);return;
+  }
+  if(result.data&&result.data.data){
+    S=result.data.data;
+  }else{
+    // Only offer migration from the old shared localStorage key when this account has no cloud row.
+    var legacy=null;
+    try{var raw=localStorage.getItem(KEY);if(raw)legacy=JSON.parse(raw)}catch(e){}
+    if(legacy&&confirm("Ada data lama yang tersimpan di browser ini. Impor data lama ke akun "+(user.email||"ini")+"? Pilih Batal untuk mulai kosong.")){
+      S=legacy;
+    }else{
+      var cached=null;
+      try{var cr=localStorage.getItem(KEY+"_"+user.id);if(cr)cached=JSON.parse(cr)}catch(e){}
+      S=cached||{faktur:[],moves:[]};
+    }
+  }
+  if(!S||typeof S!=="object")S={faktur:[],moves:[]};
+  S.faktur=S.faktur||[];S.moves=S.moves||[];ens();
+  try{localStorage.setItem(userKey(),JSON.stringify(S))}catch(e){}
+  loadingCloud=false;
+  if(!appInitialized){$("f_tgl").value=$("o_tgl").value=$("s_tgl").value=iso(today());addRow();appInitialized=true}
+  render();
+  if(!result.data){await cloudSave()}
+  var st=$("sync-status");if(st)st.textContent="Tersinkron ke cloud";
+}
+function initAuth(){
+  if(!window.supabase){setAuthMessage("Supabase JS gagal dimuat. Periksa koneksi internet.",true);return}
+  if(SUPABASE_PUBLISHABLE_KEY==="TEMPEL_PUBLISHABLE_KEY_DI_SINI"){
+    setAuthMessage("Langkah berikutnya: tempel Publishable key Supabase ke file ini.",true);return
+  }
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+  sb.auth.onAuthStateChange(function(event,session){
+    if(session&&session.user){if(!currentUser||currentUser.id!==session.user.id)loadUserData(session.user)}
+    else if(event==="SIGNED_OUT"){sessionGeneration++;currentUser=null;S={faktur:[],moves:[]};$("app-wrap").style.display="none";$("auth-panel").style.display="block"}
+  });
+  sb.auth.getSession().then(function(r){if(r.data&&r.data.session&&r.data.session.user)loadUserData(r.data.session.user)});
+}
+function exportBackup(){
+  var blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="inventory-backup-"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(url);
+}
+
 var rp=function(n){return"Rp "+Math.round(n).toLocaleString("id-ID")};
 var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
 var today=function(){var d=new Date();d.setHours(0,0,0,0);return d};
@@ -449,5 +556,5 @@ L.forEach(function(r,i){var f={id:uid(),tgl:p(-15+i),pt:r[0],no:r[1],kode:r[2],n
 S.faktur.push(f);S.moves.push({id:uid(),fid:f.id,tgl:f.tgl,kode:f.kode,nama:f.nama,ket:"Faktur "+f.no+" - "+f.pt+" (Batch "+f.batch+")",masuk:f.qty,keluar:0})});
 S.moves.push({id:uid(),tgl:p(-5),kode:"PCT500",nama:"Paracetamol 500mg",ket:"Penjualan",masuk:0,keluar:60},{id:uid(),tgl:p(-3),kode:"VTC100",nama:"Vitamin C 100mg",ket:"Penjualan",masuk:0,keluar:40});
 save();render()}
-$("f_tgl").value=$("o_tgl").value=$("s_tgl").value=iso(today());addRow();render();
+initAuth();
 </script></body></html>
