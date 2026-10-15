@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kontrol Inventory</title>
+<style>
+:root{--bg:#E7E1CF;--sf:#F7F3E8;--inp:#FCFAF3;--th:#EDE6D1;--tx:#2A2216;--mu:#6F6450;--bd:#D3CAB0;--ac:#4B5E24;--onac:#F7F3E8;--acs:#DDE3C2;--cl:#B0532D;--oc:#B9831A;--rd:#9B2D1F;--rds:#F2D9D0;--am:#8A5A00;--ams:#F4E3B8;--gr:#3F6B26;--grs:#DCE8C6;--hd:#2E3A1A;--hdt:#F1EBD6;--navbg:#D9D1B8;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1B1912;--sf:#26231A;--inp:#1F1D15;--th:#302D20;--tx:#EEE7D3;--mu:#A79D83;--bd:#3A3626;--ac:#A8BE62;--onac:#1B1912;--acs:#363D1F;--cl:#E08A5F;--oc:#E2B04C;--rd:#FF9A86;--rds:#47241D;--am:#F0C469;--ams:#3F3217;--gr:#B2D47A;--grs:#2C3A1C;--hd:#2A3516;--hdt:#EFE8D1;--navbg:#2F2C1F;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1B1912;--sf:#26231A;--inp:#1F1D15;--th:#302D20;--tx:#EEE7D3;--mu:#A79D83;--bd:#3A3626;--ac:#A8BE62;--onac:#1B1912;--acs:#363D1F;--cl:#E08A5F;--oc:#E2B04C;--rd:#FF9A86;--rds:#47241D;--am:#F0C469;--ams:#3F3217;--gr:#B2D47A;--grs:#2C3A1C;--hd:#2A3516;--hdt:#EFE8D1;--navbg:#2F2C1F;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:16px}
+h2{font:600 18px/1.25 "Fraunces",Georgia,serif;margin:0 0 12px;letter-spacing:-.005em}
+.hero{position:relative;overflow:hidden;background-color:var(--hd);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 240' preserveAspectRatio='xMidYMid slice'%3E%3Cg fill='none' stroke='%23F1EBD6' stroke-opacity='.14' stroke-width='1.3'%3E%3Cpath d='M-30 210 C 110 140, 230 230, 380 180 S 640 120, 840 190'/%3E%3Cpath d='M-30 186 C 110 116, 230 206, 380 156 S 640 96, 840 166'/%3E%3Cpath d='M-30 162 C 110 92, 230 182, 380 132 S 640 72, 840 142'/%3E%3Cpath d='M-30 138 C 110 68, 230 158, 380 108 S 640 48, 840 118'/%3E%3Cpath d='M-30 114 C 110 44, 230 134, 380 84 S 640 24, 840 94'/%3E%3Cpath d='M-30 90 C 110 20, 230 110, 380 60 S 640 0, 840 70'/%3E%3Cpath d='M-30 66 C 110 -4, 230 86, 380 36 S 640 -24, 840 46'/%3E%3Cpath d='M-30 42 C 110 -28, 230 62, 380 12 S 640 -48, 840 22'/%3E%3Cpath d='M-30 18 C 110 -52, 230 38, 380 -12 S 640 -72, 840 -2'/%3E%3Cpath d='M643 120 a 34 21 0 1 0 0.1 0'/%3E%3Cpath d='M629 120 a 62 38 0 1 0 0.1 0'/%3E%3Cpath d='M614 120 a 92 57 0 1 0 0.1 0'/%3E%3C/g%3E%3C/svg%3E");background-size:cover;background-position:center;color:var(--hdt);border-radius:22px;padding:26px 28px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.hero .brand{display:flex;align-items:center;gap:16px;min-width:0}
+.mark{width:52px;height:52px;border-radius:16px;background:var(--cl);display:grid;place-items:center;flex:none}
+.hero h1{font:650 clamp(28px,4.6vw,42px)/1.04 "Fraunces",Georgia,serif;margin:0;letter-spacing:-.015em}
+.hero .hsum{margin:6px 0 0;font-size:14.5px;opacity:.9}
+.hero .btn{background:rgba(241,235,214,.16);color:var(--hdt);border:1px solid rgba(241,235,214,.3)}
+.hero .btn.x{background:rgba(176,83,45,.7);color:#FFF4E6;border-color:rgba(255,244,230,.35)}
+nav{display:flex;gap:4px;background:var(--navbg);padding:5px;border-radius:999px;margin-bottom:16px;overflow-x:auto}
+nav button{background:none;border:0;padding:9px 18px;font:inherit;font-weight:500;color:var(--mu);cursor:pointer;border-radius:999px;white-space:nowrap}
+nav button.on{background:var(--ac);color:var(--onac);font-weight:600}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:18px;margin-bottom:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:16px}
+.kpi{--kc:var(--ac);background:var(--sf);border:1px solid var(--bd);border-top:5px solid var(--kc);border-radius:14px;padding:14px 15px 13px}
+.kpi b{display:block;font:600 clamp(21px,2.3vw,27px)/1.1 "Fraunces",Georgia,serif;font-variant-numeric:tabular-nums;margin-bottom:5px;overflow-wrap:anywhere}
+.kpi span{display:block;color:var(--mu);font-size:13px;line-height:1.3}
+.kpi.w{background:var(--ams)}.kpi.d{background:var(--rds)}.kpi.w span,.kpi.d span{color:var(--tx);opacity:.82}
+button.kpi{font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%}
+.kpi.on{outline:2px solid var(--kc);outline-offset:2px}
+.k-items{--kc:var(--ac)}.k-low{--kc:var(--cl)}.k-stok{--kc:var(--oc)}.k-ed{--kc:#8B6B3E}.k-nilai{--kc:#6E7F3A}.k-hutang{--kc:#7A4B2A}.k-jt{--kc:var(--oc)}.k-lewat{--kc:var(--rd)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+label{font-size:13px;color:var(--mu);display:block;margin-bottom:3px}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--bd);border-radius:10px;background:var(--inp);color:var(--tx);font:inherit}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--oc);outline-offset:1px}
+.btn{background:var(--ac);color:var(--onac);border:0;border-radius:999px;padding:10px 20px;font:600 14px "Figtree",system-ui,sans-serif;cursor:pointer}
+.btn.s{background:var(--acs);color:var(--ac);padding:5px 14px;font-size:13px}
+.btn.x{background:var(--rds);color:var(--rd);padding:5px 14px;font-size:13px}
+.tw{overflow-x:auto}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:14px}
+th,td{padding:9px 10px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--bd)}
+th{background:var(--th);color:var(--mu);font-weight:600;font-size:13px}
+th:first-child{border-top-left-radius:10px}th:last-child{border-top-right-radius:10px}
+#d_tbl th{position:sticky;top:0;z-index:1}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.lk{cursor:pointer}tr.lk:hover td{background:var(--acs)}
+.ln{cursor:pointer;color:var(--ac);text-decoration:underline;text-underline-offset:3px}
+.b{display:inline-block;white-space:nowrap;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.b.r{background:var(--rds);color:var(--rd)}.b.a{background:var(--ams);color:var(--am)}.b.g{background:var(--grs);color:var(--gr)}
+.alert{background:var(--rds);border-left:6px solid var(--rd);color:var(--rd);border-radius:12px;padding:11px 16px;margin-bottom:12px;font-weight:600}
+.alert.a{background:var(--ams);border-left-color:var(--oc);color:var(--am)}
+.bar{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px}.bar i{display:block;height:14px;background:var(--ac);border-radius:4px}
+.bar .l{width:150px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mu{color:var(--mu)}.err{color:var(--rd);font-weight:600}.ok{color:var(--gr);font-weight:600}.hide{display:none}.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}.cols .card{margin-bottom:0}.cols td{white-space:normal}.cols .b{white-space:nowrap}.cols{margin-bottom:16px}
+@media (max-width:560px){.kpis{grid-template-columns:repeat(2,1fr);gap:10px}.kpi{padding:11px 12px}.kpi span{font-size:12px}.hero{padding:20px 18px}.mark{width:42px;height:42px;border-radius:13px}.card{padding:14px}}
+@media (prefers-reduced-motion:no-preference){.alert{animation:p 1.6s 2}@keyframes p{50%{opacity:.6}}}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Figtree:wght@400;500;600&display=swap"><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script></head><body><div class="wrap">
+<header class="hero"><div class="brand"><div class="mark" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#F7F3E8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M14 3 4 8v12l10 5 10-5V8z"/><path d="M4 8l10 5 10-5M14 13v12"/></svg></div><div><h1>Kontrol Inventory</h1><p class="hsum" id="hsum">Stok, faktur, dan jatuh tempo dalam satu layar</p></div></div><div><button class="btn s" onclick="demo()">Muat contoh data</button> <button class="btn x" onclick="reset()">Hapus semua</button></div></header>
+<div id="alerts"></div>
+<nav id="nav"></nav>
+
+<section id="t-dash"></section>
+<section id="t-low" class="hide"></section>
+
+<section id="t-faktur" class="hide">
+<div class="card"><h2>Input faktur pembelian</h2>
+<div class="grid">
+<div><label>Tanggal faktur</label><input type="date" id="f_tgl" onchange="setTerm()"></div>
+<div><label>Nama PT</label><input id="f_pt"></div>
+<div><label>Nomor faktur</label><input id="f_no"></div>
+<div><label>Termin pembayaran</label><select id="f_term" onchange="setTerm()"><option value="">Isi tanggal manual</option><option value="0">Cash</option><option value="30">JT 30 hari</option><option value="45">JT 45 hari</option><option value="60">JT 60 hari</option></select></div>
+<div><label>Jatuh tempo</label><input type="date" id="f_due" oninput="$('f_term').value=''"></div>
+<div><label>No. TPO (opsional)</label><input id="f_tpo"></div>
+<div><label>No. TDO (opsional)</label><input id="f_tdo"></div>
+</div>
+<div class="tw" style="margin-top:12px"><table><thead><tr><th>Kode barang</th><th>Nama barang</th><th>Qty</th><th>Harga satuan (Rp)</th><th>Disc %</th><th>PPN %</th><th>Batch</th><th>ED</th><th class="n">Total harga</th><th></th></tr></thead><tbody id="fitems"></tbody></table></div><datalist id="kodes"></datalist>
+<p style="margin:10px 0 0"><button class="btn s" onclick="addRow()">+ Tambah barang</button> &nbsp; <b>Total faktur: <span id="gtot">Rp 0</span></b></p>
+<p style="margin:12px 0 0"><button class="btn" onclick="addF()">Simpan faktur</button> <span id="fmsg" class="mu"></span></p>
+<p class="mu" style="margin:6px 0 0;font-size:13px">Satu faktur bisa berisi banyak barang. Klik "+ Tambah barang" untuk baris baru. Setelah disimpan, semua barang langsung masuk ke kartu stok.</p></div>
+<div class="card"><h2>Impor dari spreadsheet</h2>
+<p class="mu" style="margin:0 0 10px;font-size:13px">Unggah file Excel (.xlsx, .xls) atau .csv. Baris pertama harus berisi judul kolom: <b>Nama PT, Nomor Faktur, Kode Barang, Nama Barang, Qty, Harga, ED, Batch, Total Harga, Jatuh Tempo</b>. Kolom <b>Tanggal Faktur</b> boleh ditambahkan (kalau kosong, dipakai tanggal hari ini). Baris dengan PT dan nomor faktur yang sama digabung jadi satu faktur. Format tanggal: 31/12/2026 atau 2026-12-31.</p>
+<input type="file" id="imp" accept=".xlsx,.xls,.csv" onchange="readF(this)">
+<div id="imsg" style="margin-top:10px"></div></div>
+<div class="card"><h2>Tempel data dari website</h2>
+<p class="mu" style="margin:0 0 10px;font-size:13px">Di website kantor, blok seluruh tabel (sertakan judul kolom), salin dengan Ctrl+C, lalu tempel di kotak ini dengan Ctrl+V. Jika judul kolom tidak ikut tersalin atau tidak dikenali, Anda bisa memilih sendiri arti tiap kolom sebelum diimpor.</p>
+<textarea id="pst" rows="6" placeholder="Tempel data di sini" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:13px monospace"></textarea>
+<p style="margin:10px 0 0"><button class="btn" onclick="readP()">Baca data</button></p>
+<div id="pprev" style="margin-top:10px"></div><div id="pmsg" style="margin-top:10px"></div></div>
+<div class="card"><h2>Daftar faktur</h2><div class="tw" id="flist"></div></div>
+</section>
+
+<section id="t-stok" class="hide">
+<div class="card"><h2>Catat barang keluar</h2>
+<div class="grid">
+<div><label>Tanggal</label><input type="date" id="o_tgl"></div>
+<div><label>Barang</label><select id="o_kode"></select></div>
+<div><label>Qty keluar</label><input type="number" min="1" id="o_qty"></div>
+<div><label>Keterangan</label><input id="o_ket" placeholder="mis. Penjualan / Pemakaian"></div>
+</div><p style="margin:12px 0 0"><button class="btn" onclick="addO()">Simpan barang keluar</button> <span id="omsg" class="mu"></span></p></div>
+<div class="card"><h2>Impor stok saat ini</h2>
+<p class="mu" style="margin:0 0 10px;font-size:13px">Untuk memasukkan stok yang sudah ada. Cukup dua kolom: <b>Nama Barang</b> dan <b>Qty</b> (satuan terkecil). Kolom <b>Kode Barang</b> dan <b>Satuan</b> boleh ditambahkan (opsional). Unggah file Excel/CSV, atau tempel dari Excel. Tanpa judul kolom juga bisa: kolom pertama nama barang, kolom kedua qty. Jika kode barang belum ada, barang diberi kode sementara yang otomatis diganti saat faktur atau mutasi dengan kode aslinya diimpor.</p>
+<div class="grid" style="max-width:640px;margin-bottom:10px"><div><label>Tanggal stok</label><input type="date" id="s_tgl"></div><div><label>Cara impor</label><select id="s_mode"><option value="sesuai">Samakan stok dengan angka ini (disarankan)</option><option value="tambah">Tambahkan sebagai stok awal</option></select></div></div>
+<input type="file" id="sfile" accept=".xlsx,.xls,.csv" onchange="readS(this)">
+<textarea id="sst" rows="5" placeholder="atau tempel data di sini (Nama Barang, Qty)" style="width:100%;margin-top:10px;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:13px monospace"></textarea>
+<p style="margin:10px 0 0"><button class="btn" onclick="readS()">Baca data</button></p>
+<div id="sprev" style="margin-top:10px"></div><div id="smsg" style="margin-top:10px"></div></div>
+<div class="card"><h2>Tempel mutasi barang dari website</h2>
+<p class="mu" style="margin:0 0 10px;font-size:13px">Salin seluruh halaman Mutasi Barang dari website kantor (dari judul sampai GRANDTOTAL), lalu tempel di sini. Hanya barang dengan Qty Mutasi lebih dari 0 yang diimpor. Barang yang tidak direalisasi (Qty Mutasi 0) dilewati.</p>
+<textarea id="mst" rows="6" placeholder="Tempel data mutasi di sini" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:13px monospace"></textarea>
+<p style="margin:10px 0 0"><button class="btn" onclick="readMT()">Baca data</button></p>
+<div id="mprev" style="margin-top:10px"></div><div id="mmsg" style="margin-top:10px"></div></div>
+<div class="card"><h2>Kartu stok</h2><div style="max-width:320px;margin-bottom:10px"><label>Tampilkan barang</label><select id="k_sel" onchange="rStok()"></select></div><div class="tw" id="klist"></div></div>
+</section>
+</div>
+<script>
+var KEY="inv_v1",S={faktur:[],moves:[]},TAB="dash";
+try{var r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){}
+function cashQ(t,d){return!!t&&!!d&&d<=t}
+function ens(){S.cfg=S.cfg||{pct:25,days:14};S.min=S.min||{};if(!S.cashfix){(S.faktur||[]).forEach(function(f){if(cashQ(f.tgl,f.due))f.lunas=true});S.cashfix=1}}ens();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+var $=function(i){return document.getElementById(i)};
+var rp=function(n){return"Rp "+Math.round(n).toLocaleString("id-ID")};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+var today=function(){var d=new Date();d.setHours(0,0,0,0);return d};
+var iso=function(d){return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+var days=function(s){return Math.round((new Date(s+"T00:00:00")-today())/864e5)};
+var fd=function(s){return s?new Date(s+"T00:00:00").toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"}):"-"};
+var UC=0,uid=function(){return Date.now().toString(36)+(UC++).toString(36)+Math.random().toString(36).slice(2,5)};
+var WARN=7,EDWARN=90;
+
+/* ---- navigasi ---- */
+var TABS=[["dash","Dashboard"],["low","Stok menipis"],["faktur","Faktur"],["stok","Kartu stok"]];
+function nav(){$("nav").innerHTML=TABS.map(function(t){return'<button class="'+(t[0]==TAB?"on":"")+'" onclick="go(\''+t[0]+'\')">'+t[1]+(t[0]=="low"&&LOWN?' <span class="b '+(LOWH?"r":"a")+'">'+LOWN+"</span>":"")+"</button>"}).join("");
+TABS.forEach(function(t){$("t-"+t[0]).classList.toggle("hide",t[0]!=TAB)})}
+function go(t){TAB=t;nav();render()}
+
+/* ---- data turunan ---- */
+function items(){var m={};S.moves.forEach(function(x){var o=m[x.kode]||(m[x.kode]={kode:x.kode,nama:x.nama,masuk:0,keluar:0,harga:0});o.nama=x.nama;if(x.sat)o.sat=x.sat;o.masuk+=x.masuk;o.keluar+=x.keluar});
+S.faktur.slice().sort(function(a,b){return a.tgl<b.tgl?-1:1}).forEach(function(f){if(m[f.kode])m[f.kode].harga=f.harga*(1-(f.disc||0)/100)});
+return Object.keys(m).sort().map(function(k){var o=m[k];o.sisa=o.masuk-o.keluar;return o})}
+function dueInfo(f){if(f.lunas)return{c:"g",t:"Lunas",d:9e9};var d=days(f.due);
+if(d<0)return{c:"r",t:"Lewat "+(-d)+" hari",d:d};if(d==0)return{c:"r",t:"Jatuh tempo hari ini",d:d};
+if(d<=WARN)return{c:"a",t:"H-"+d,d:d};return{c:"g",t:"H-"+d,d:d}}
+
+/* ---- faktur ---- */
+var ROW='<tr><td><input class="rk" list="kodes" oninput="auto(this)" style="min-width:100px"></td><td><input class="rn" style="min-width:170px"></td><td><input class="rq" type="number" min="1" oninput="tot(this)" style="width:80px"></td><td><input class="rh" type="number" min="0" oninput="tot(this)" style="width:120px"></td><td><input class="rd" type="number" min="0" max="100" step="any" oninput="tot(this)" style="width:70px"></td><td><input class="rp" type="number" min="0" max="100" step="any" oninput="tot(this)" style="width:70px"></td><td><input class="rb" style="width:110px"></td><td><input class="re" type="date"></td><td class="n rt">Rp 0</td><td><button class="btn x" onclick="this.closest(\'tr\').remove();gt()">Hapus</button></td></tr>';
+function addRow(){$("fitems").insertAdjacentHTML("beforeend",ROW)}
+function LT(L){return Math.round(L.qty*L.harga*(1-(L.disc||0)/100)*(1+(L.ppn||0)/100)*100)/100}
+function rt(tr){var q=function(c){return+tr.querySelector("."+c).value||0};return LT({qty:q("rq"),harga:q("rh"),disc:q("rd"),ppn:q("rp")})}
+function gt(){var t=0;Array.prototype.forEach.call($("fitems").rows,function(tr){t+=rt(tr)});$("gtot").textContent=rp(t)}
+function tot(el){var tr=el.closest("tr");tr.querySelector(".rt").textContent=rp(rt(tr));gt()}
+function auto(el){var tr=el.closest("tr"),k=el.value.trim().toUpperCase(),it=items().filter(function(i){return i.kode==k})[0],n=tr.querySelector(".rn");if(it&&!n.value)n.value=it.nama}
+function groups(){var m={},o=[];S.faktur.forEach(function(f){var g=f.gid||f.id,x=m[g];if(!x){x=m[g]={gid:g,no:f.no,pt:f.pt,due:f.due,tgl:f.tgl,lunas:f.lunas,total:0,lines:[]};o.push(x)}x.total+=f.total;x.lines.push(f)});return o}
+function addF(){var v=function(i){return $(i).value.trim()},hd={tgl:v("f_tgl")||iso(today()),pt:v("f_pt"),no:v("f_no"),due:v("f_due"),tpo:v("f_tpo"),tdo:v("f_tdo")},miss=[],lines=[];
+if(!hd.pt)miss.push("nama PT");if(!hd.no)miss.push("nomor faktur");if(!hd.due)miss.push("jatuh tempo");
+Array.prototype.forEach.call($("fitems").rows,function(tr,i){var q=function(c){return tr.querySelector("."+c).value.trim()},L={kode:q("rk").toUpperCase(),nama:q("rn"),qty:+q("rq"),harga:+q("rh"),batch:q("rb"),ed:q("re"),disc:+q("rd")||0,ppn:+q("rp")||0};
+if(!L.kode&&!L.nama&&!L.qty&&!L.harga)return;var m=[];if(!L.kode)m.push("kode");if(!L.nama)m.push("nama");if(!(L.qty>0))m.push("qty");
+if(m.length)miss.push("barang #"+(i+1)+" ("+m.join(", ")+")");lines.push(L)});
+if(!lines.length)miss.push("minimal 1 barang");
+if(miss.length){$("fmsg").className="err";$("fmsg").textContent="Faktur BELUM tersimpan. Masih kosong: "+miss.join(", ")+".";return}
+var gid=uid();lines.forEach(function(L){adopt(L.kode,L.nama);var f={id:uid(),gid:gid,tgl:hd.tgl,pt:hd.pt,no:hd.no,tpo:hd.tpo,tdo:hd.tdo,kode:L.kode,nama:L.nama,qty:L.qty,harga:L.harga,batch:L.batch,ed:L.ed,due:hd.due,lunas:cashQ(hd.tgl,hd.due),disc:L.disc,ppn:L.ppn,total:LT(L)};S.faktur.push(f);
+S.moves.push({id:uid(),fid:f.id,tgl:f.tgl,kode:f.kode,nama:f.nama,ket:KET(f),sat:f.sat||"",masuk:f.qty,keluar:0})});
+save();["f_pt","f_no","f_due","f_tpo","f_tdo","f_term"].forEach(function(i){$(i).value=""});$("fitems").innerHTML="";addRow();gt();
+$("fmsg").className="ok";$("fmsg").textContent="Tersimpan. "+lines.length+" barang sudah masuk ke kartu stok."+(cashQ(hd.tgl,hd.due)?" Faktur cash otomatis berstatus lunas.":"");render()}
+function lunas(g){S.faktur.forEach(function(f){if((f.gid||f.id)==g)f.lunas=!f.lunas});save();render()}
+function delF(g){if(!confirm("Hapus faktur ini beserta semua barangnya? Catatan barang masuk di kartu stok ikut terhapus."))return;
+var ids=S.faktur.filter(function(f){return(f.gid||f.id)==g}).map(function(f){return f.id});
+S.faktur=S.faktur.filter(function(f){return(f.gid||f.id)!=g});S.moves=S.moves.filter(function(m){return ids.indexOf(m.fid)<0});save();render()}
+function rFaktur(){$("kodes").innerHTML=items().map(function(i){return'<option value="'+esc(i.kode)+'">'+esc(i.nama)+"</option>"}).join("");
+if(!S.faktur.length){$("flist").innerHTML='<p class="mu">Belum ada faktur. Isi formulir di atas untuk mulai.</p>';return}
+var rows=groups().sort(function(a,b){return dueInfo(a).d-dueInfo(b).d}).map(function(g){var d=dueInfo(g);
+return g.lines.map(function(f,i){return"<tr><td>"+esc(f.no)+"</td><td>"+esc(f.tdo||"")+"</td><td>"+esc(f.tpo||"")+"</td><td>"+esc(f.pt)+"</td><td>"+esc(f.kode)+"</td><td>"+esc(f.nama)+'</td><td class="n">'+f.qty+(f.sat?" "+esc(f.sat):"")+(f.kv>1?'<br><small class="mu">'+f.q0+" "+esc(f.s0)+" x "+f.kv+"</small>":"")+'</td><td class="n">'+rp2(f.harga)+(f.sat?"/"+esc(f.sat):"")+((f.disc||f.ppn)?'<br><small class="mu">'+(f.disc?"disc "+f.disc+"% ":"")+(f.ppn?"PPN "+f.ppn+"%":"")+"</small>":"")+"</td><td>"+esc(f.batch)+"</td><td>"+fd(f.ed)+'</td><td class="n">'+rp(f.total)+"</td><td>"+fd(f.due)+"</td><td>"+(i?"":'<span class="b '+d.c+'">'+d.t+"</span>")+"</td><td>"+(i?"":'<button class="btn s" onclick="lunas(\''+g.gid+"')\">"+(g.lunas?"Batal lunas":"Tandai lunas")+'</button> <button class="btn x" onclick="delF(\''+g.gid+"')\">Hapus faktur</button>")+"</td></tr>"}).join("")+(g.lines.length>1?'<tr><td colspan="10" class="n mu">Total faktur '+esc(g.no)+'</td><td class="n"><b>'+rp(g.total)+'</b></td><td colspan="3"></td></tr>':"")}).join("");
+$("flist").innerHTML="<table><tr><th>No. faktur</th><th>TDO</th><th>TPO</th><th>PT</th><th>Kode</th><th>Nama barang</th><th class=n>Qty</th><th class=n>Harga</th><th>Batch</th><th>ED</th><th class=n>Total</th><th>Jatuh tempo</th><th>Status</th><th></th></tr>"+rows+"</table>"}
+
+/* ---- kartu stok ---- */
+function addO(){var k=$("o_kode").value,q=+$("o_qty").value,it=items().filter(function(i){return i.kode==k})[0];
+if(!it||!(q>0)){$("omsg").textContent="Pilih barang dan isi qty.";return}
+if(q>it.sisa){$("omsg").textContent="Stok tidak cukup. Sisa "+it.sisa+".";return}
+S.moves.push({id:uid(),tgl:$("o_tgl").value||iso(today()),kode:k,nama:it.nama,ket:$("o_ket").value.trim()||"Barang keluar",sat:it.sat||"",masuk:0,keluar:q});
+save();$("o_qty").value="";$("o_ket").value="";$("omsg").textContent="Tersimpan.";render()}
+function rStok(){var its=items(),sel=$("k_sel"),cur=sel.value,os=$("o_kode"),oc=os.value;
+sel.innerHTML='<option value="">Semua barang</option>'+its.map(function(i){return'<option value="'+esc(i.kode)+'">'+esc(i.kode)+" - "+esc(i.nama)+"</option>"}).join("");sel.value=cur;
+os.innerHTML=its.map(function(i){return'<option value="'+esc(i.kode)+'">'+esc(i.kode)+" - "+esc(i.nama)+" (sisa "+i.sisa+(i.sat?" "+esc(i.sat):"")+")</option>"}).join("");os.value=oc;
+var list=S.moves.filter(function(m){return!sel.value||m.kode==sel.value}).sort(function(a,b){return a.kode==b.kode?(a.tgl==b.tgl?(a.id<b.id?-1:1):(a.tgl<b.tgl?-1:1)):(a.kode<b.kode?-1:1)});
+if(!list.length){$("klist").innerHTML='<p class="mu">Belum ada pergerakan stok. Simpan faktur dulu, barang masuk akan tercatat otomatis.</p>';return}
+var run={};var rows=list.map(function(m){run[m.kode]=(run[m.kode]||0)+m.masuk-m.keluar;
+return"<tr><td>"+fd(m.tgl)+"</td><td>"+esc(m.kode)+"</td><td>"+esc(m.nama)+"</td><td>"+esc(m.sat||"")+"</td><td>"+esc(m.ket)+'</td><td class="n">'+(m.masuk||"")+'</td><td class="n">'+(m.keluar||"")+'</td><td class="n"><b>'+run[m.kode]+"</b></td></tr>"}).join("");
+$("klist").innerHTML="<table><tr><th>Tanggal</th><th>Kode</th><th>Nama barang</th><th>Satuan</th><th>Keterangan</th><th class=n>Masuk</th><th class=n>Keluar</th><th class=n>Sisa</th></tr>"+rows+"</table>"}
+
+/* ---- dashboard & peringatan ---- */
+var TL={cash:"Cash","30":"JT 30 hari","45":"JT 45 hari","60":"JT 60 hari",lain:"Lainnya"},JT="all";
+function termOf(g){var d=Math.round((new Date(g.due+"T00:00:00")-new Date(g.tgl+"T00:00:00"))/864e5);if(!(d>0))return"cash";var T=[30,45,60];for(var i=0;i<3;i++)if(Math.abs(d-T[i])<=3)return String(T[i]);return"lain"}
+function jtf(v){JT=v;dfill()}
+function setTerm(){var v=$("f_term").value;if(v==="")return;var t=$("f_tgl").value||iso(today()),d=new Date(t+"T00:00:00");d.setDate(d.getDate()+(+v));$("f_due").value=iso(d)}
+var DK="",DL=[],LOW=[],LOWN=0,LOWH=0,LF="";
+function dk(k){DK=DK==k?"":k;rDash()}
+function openItem(k){TAB="stok";nav();render();$("k_sel").value=k;rStok();if(typeof window!="undefined"&&window.scrollTo)window.scrollTo(0,0)}
+function lowCalc(){ens();var its=items(),pk={},u={},bal={};
+S.moves.slice().sort(function(a,b){return a.tgl==b.tgl?(a.id<b.id?-1:1):(a.tgl<b.tgl?-1:1)}).forEach(function(m){bal[m.kode]=(bal[m.kode]||0)+m.masuk-m.keluar;if(bal[m.kode]>(pk[m.kode]||0))pk[m.kode]=bal[m.kode];
+if(m.keluar&&!/^Penyesuaian/.test(m.ket||"")){var d=days(m.tgl);if(d<=0&&d>=-30)u[m.kode]=(u[m.kode]||0)+m.keluar}});
+LOW=[];its.forEach(function(i){var peak=Math.max(pk[i.kode]||0,i.sisa);if(peak<=0)return;
+var cm=+S.min[i.kode]>0,mn=cm?+S.min[i.kode]:Math.ceil(peak*S.cfg.pct/100),rate=(u[i.kode]||0)/30,est=rate>0?i.sisa/rate:null,lv=0,why="";
+if(i.sisa<=0){lv=2;why="Stok habis"}else if(i.sisa<=mn){lv=1;why="Sisa sudah di bawah batas minimum ("+mn+")"}else if(est!==null&&est<=S.cfg.days){lv=1;why="Diperkirakan habis dalam "+Math.ceil(est)+" hari"}
+if(lv)LOW.push({kode:i.kode,nama:i.nama,sat:i.sat||"",sisa:i.sisa,mn:mn,cm:cm,rate:rate,est:est,lv:lv,why:why})});
+LOW.sort(function(a,b){return b.lv-a.lv||(a.est==null?1e9:a.est)-(b.est==null?1e9:b.est)||a.sisa/a.mn-b.sisa/b.mn});
+LOWN=LOW.length;LOWH=LOW.filter(function(r){return r.lv==2}).length}
+function setCfg(k,v){var n=+v;if(n>0){S.cfg[k]=n;save();render()}}
+function setMin(k,v){var n=+v;if(n>0)S.min[k]=n;else delete S.min[k];save();render()}
+function lf(v){LF=LF==v?"":v;rLow()}
+function rLow(){var H=LOW.filter(function(r){return r.lv==2}).length,M=LOW.length-H,L=LOW.filter(function(r){return!LF||String(r.lv)==LF});
+var h='<div class="card"><h2>Pengaturan peringatan</h2><div class="grid" style="max-width:640px"><div><label>Menipis jika sisa ≤ (% dari stok tertinggi)</label><input type="number" min="1" max="100" value="'+S.cfg.pct+'" onchange="setCfg(\'pct\',this.value)"></div><div><label>atau diperkirakan habis dalam ≤ (hari)</label><input type="number" min="1" value="'+S.cfg.days+'" onchange="setCfg(\'days\',this.value)"></div></div><p class="mu" style="font-size:13px;margin:8px 0 0">Perkiraan habis dihitung dari rata-rata barang keluar 30 hari terakhir. Batas minimum tiap barang bisa diisi sendiri di tabel. Kosongkan untuk memakai batas otomatis (persen di atas).</p></div>';
+h+='<div class="kpis"><button class="kpi k-lewat '+(H?"d":"")+(LF=="2"?" on":"")+'" onclick="lf(\'2\')"><b>'+H+'</b><span>Stok habis</span></button><button class="kpi k-low '+(M?"w":"")+(LF=="1"?" on":"")+'" onclick="lf(\'1\')"><b>'+M+'</b><span>Stok menipis</span></button></div>';
+h+='<div class="card"><h2>Barang yang perlu dipesan'+(LF=="2"?" (stok habis)":LF=="1"?" (stok menipis)":"")+'</h2>';
+if(!L.length)h+='<p class="mu">'+(LOW.length?"Tidak ada barang di kategori ini.":"Tidak ada barang yang habis atau menipis. Stok aman.")+"</p>";
+else h+='<div class="tw"><table><tr><th>Status</th><th>Kode</th><th>Nama barang</th><th>Satuan</th><th class=n>Sisa</th><th>Batas minimum</th><th class=n>Pakai/hari</th><th class=n>Perkiraan habis</th><th>Alasan</th></tr>'+L.map(function(r){return"<tr><td><span class=\"b "+(r.lv==2?"r":"a")+'">'+(r.lv==2?"Habis":"Menipis")+"</span></td><td>"+esc(r.kode)+'</td><td class="ln" data-k="'+esc(r.kode)+'" onclick="openItem(this.dataset.k)">'+esc(r.nama)+"</td><td>"+esc(r.sat)+'</td><td class="n"><b>'+r.sisa+'</b></td><td><input type="number" min="1" style="width:130px" data-k="'+esc(r.kode)+'" value="'+(r.cm?S.min[r.kode]:"")+'" placeholder="'+r.mn+' (auto)" onchange="setMin(this.dataset.k,this.value)"></td><td class="n">'+(r.rate?+r.rate.toFixed(1):"-")+'</td><td class="n">'+(r.est===null?"-":r.sisa<=0?"0 hari":Math.ceil(r.est)+" hari")+"</td><td>"+esc(r.why)+"</td></tr>"}).join("")+"</table></div>";
+$("t-low").innerHTML=h+"</div>"}
+function dfill(){var t=$("d_tbl");if(!t)return;var q=$("d_q")?$("d_q").value.toLowerCase().trim():"",its=items(),un=groups().filter(function(f){return!f.lunas}),h="",ti="",
+mt=function(i){return!q||(i.nama+" "+i.kode).toLowerCase().indexOf(q)>=0},st=function(g){return'<span class="b '+dueInfo(g).c+'">'+dueInfo(g).t+"</span>"};
+if(DK=="items"||DK=="stok"||DK=="nilai"){var L=its.filter(mt);
+if(DK=="items")L.sort(function(a,b){return a.nama.toLowerCase()<b.nama.toLowerCase()?-1:1});
+else if(DK=="stok"){L=L.filter(function(i){return i.sisa>0}).sort(function(a,b){return b.sisa-a.sisa})}
+else{L=L.filter(function(i){return i.sisa*i.harga>0}).sort(function(a,b){return b.sisa*b.harga-a.sisa*a.harga})}
+DL=L.map(function(i){return i.kode});
+ti=(DK=="items"?"Daftar jenis barang":DK=="stok"?"Sisa stok per barang":"Nilai persediaan per barang")+" ("+L.length+")";
+var nv=0;h="<table><tr><th>Kode</th><th>Nama barang</th><th>Satuan</th>"+(DK=="nilai"?"<th class=n>Sisa</th><th class=n>Harga / satuan</th><th class=n>Nilai</th>":"<th class=n>Masuk</th><th class=n>Keluar</th><th class=n>Sisa</th>")+"</tr>"+L.map(function(i){var v=i.sisa*i.harga;nv+=v;
+return'<tr class="lk" data-k="'+esc(i.kode)+'" onclick="openItem(this.dataset.k)"><td>'+esc(i.kode)+"</td><td>"+esc(i.nama)+"</td><td>"+esc(i.sat||"")+(DK=="nilai"?'</td><td class="n">'+i.sisa+'</td><td class="n">'+rp2(i.harga)+'</td><td class="n">'+rp(v)+"</td></tr>":'</td><td class="n">'+i.masuk+'</td><td class="n">'+i.keluar+'</td><td class="n"><b>'+i.sisa+"</b></td></tr>")}).join("")+"</table>"+(DK=="nilai"?'<p class="mu">Total nilai '+rp(nv)+"</p>":"")+'<p class="mu" style="font-size:13px">Klik barang untuk membuka kartu stoknya.</p>'}
+else if(DK=="hutang"||DK=="tempo"||DK=="lewat"){var gs=un.filter(function(g){var d=dueInfo(g).d;return DK=="hutang"||(DK=="tempo"?d<=WARN:d<0)}).sort(function(a,b){return dueInfo(a).d-dueInfo(b).d});
+ti=(DK=="hutang"?"Faktur belum lunas":DK=="tempo"?"Faktur jatuh tempo dalam "+WARN+" hari":"Faktur lewat jatuh tempo")+" ("+gs.length+")";
+h=gs.length?"<table><tr><th>No. faktur</th><th>PT</th><th>Barang</th><th class=n>Total</th><th>Jatuh tempo</th><th>Status</th><th></th></tr>"+gs.map(function(g){var nm=g.lines.map(function(f){return f.nama}),sm=nm.slice(0,3).join(", ")+(nm.length>3?" +"+(nm.length-3)+" lainnya":"");
+return"<tr><td>"+esc(g.no)+"</td><td>"+esc(g.pt)+"</td><td>"+esc(sm)+'</td><td class="n">'+rp(g.total)+"</td><td>"+fd(g.due)+"</td><td>"+st(g)+'</td><td><button class="btn s" onclick="lunas(\''+g.gid+"')\">Tandai lunas</button></td></tr>"}).join("")+"</table>":'<p class="mu">Tidak ada faktur di kategori ini.</p>'}
+else if(DK=="jt"){var tm=["cash","30","45","60"],cnt={},sm={};
+if(un.some(function(g){return termOf(g)=="lain"}))tm.push("lain");
+tm.forEach(function(k){cnt[k]=0;sm[k]=0});un.forEach(function(g){var k=termOf(g);cnt[k]++;sm[k]+=g.total});
+var gs=un.filter(function(g){return JT=="all"||termOf(g)==JT}).sort(function(a,b){return dueInfo(a).d-dueInfo(b).d}),tt=gs.reduce(function(a,g){return a+g.total},0);
+ti="Jatuh tempo per termin (faktur belum lunas)";
+h='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">'+[["all","Semua",un.length]].concat(tm.map(function(k){return[k,TL[k],cnt[k]]})).map(function(o){return'<button class="btn'+(JT==o[0]?"":" s")+'" onclick="jtf(\''+o[0]+'\')">'+o[1]+" ("+o[2]+")</button>"}).join("")+"</div>"+(gs.length?'<p class="mu" style="margin:0 0 8px">'+gs.length+" faktur, total "+rp(tt)+"</p><table><tr><th>No. faktur</th><th>PT</th><th>Termin</th><th>Tgl faktur</th><th>Jatuh tempo</th><th class=n>Total</th><th>Status</th><th></th></tr>"+gs.map(function(g){return"<tr><td>"+esc(g.no)+"</td><td>"+esc(g.pt)+"</td><td>"+TL[termOf(g)]+"</td><td>"+fd(g.tgl)+"</td><td>"+fd(g.due)+'</td><td class="n">'+rp(g.total)+"</td><td>"+st(g)+'</td><td><button class="btn s" onclick="lunas(\''+g.gid+"')\">Tandai lunas</button></td></tr>"}).join("")+"</table>":'<p class="mu">Tidak ada faktur belum lunas di termin ini.</p>')}
+else if(DK=="ed"){var es=S.faktur.filter(function(f){return f.ed&&days(f.ed)<=EDWARN}).sort(function(a,b){return a.ed<b.ed?-1:1});
+ti="Batch mendekati kedaluwarsa ("+es.length+")";
+h=es.length?"<table><tr><th>Kode</th><th>Nama barang</th><th>Batch</th><th class=n>Qty faktur</th><th>ED</th><th>Status</th><th>Faktur</th></tr>"+es.map(function(f){var d=days(f.ed);return"<tr><td>"+esc(f.kode)+"</td><td>"+esc(f.nama)+"</td><td>"+esc(f.batch)+'</td><td class="n">'+f.qty+" "+esc(f.sat||"")+"</td><td>"+fd(f.ed)+'</td><td><span class="b '+(d<=30?"r":"a")+'">'+(d<0?"Kedaluwarsa":d+" hari lagi")+"</span></td><td>"+esc(f.no)+"</td></tr>"}).join("")+"</table>":'<p class="mu">Tidak ada batch yang mendekati ED.</p>'}
+t.innerHTML=h;if($("dtitle"))$("dtitle").textContent=ti}
+function rDash(){var its=items(),un=groups().filter(function(f){return!f.lunas}),
+soon=un.filter(function(f){return dueInfo(f).d<=WARN}),late=un.filter(function(f){return dueInfo(f).d<0}),
+hut=un.reduce(function(a,f){return a+f.total},0),nilai=its.reduce(function(a,i){return a+i.sisa*i.harga},0),stok=its.reduce(function(a,i){return a+i.sisa},0),
+eds=S.faktur.filter(function(f){return f.ed&&days(f.ed)<=EDWARN}).sort(function(a,b){return a.ed<b.ed?-1:1}),
+top=its.slice().sort(function(a,b){return b.sisa-a.sisa}).slice(0,12),mx=Math.max.apply(null,top.map(function(i){return i.sisa}).concat([1]));
+var K=[["items",its.length,"Jenis barang",""],["low",LOWN,"Stok menipis / habis",LOWH?"d":LOWN?"w":""],["stok",stok.toLocaleString("id-ID"),"Total sisa stok",""],["ed",eds.length,"Batch ED ≤ "+EDWARN+" hari",eds.length?"w":""],["nilai",rp(nilai),"Nilai persediaan (harga beli terakhir)",""],["hutang",rp(hut),"Faktur belum lunas ("+un.length+")",""],["jt",soon.length,"Jatuh tempo ≤ "+WARN+" hari (lihat per termin)",soon.length?"w":""],["lewat",late.length,"Sudah lewat jatuh tempo",late.length?"d":""]];
+var h='<div class="kpis">'+K.map(function(k){return'<button class="kpi k-'+k[0]+' '+k[3]+(DK==k[0]?" on":"")+'" onclick="'+(k[0]=="low"?"go('low')":"dk('"+k[0]+"')")+'"><b>'+k[1]+"</b><span>"+k[2]+"</span></button>"}).join("")+"</div>";
+if(DK)h+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 id="dtitle"></h2><button class="btn s" onclick="dk(\'\')">Tutup</button></div>'+(DK=="items"||DK=="stok"||DK=="nilai"?'<div style="max-width:320px;margin-bottom:10px"><input id="d_q" placeholder="Cari nama atau kode barang" oninput="dfill()"></div>':"")+'<div class="tw" id="d_tbl" style="max-height:440px;overflow-y:auto"></div></div>';
+h+='<div class="cols"><div class="card"><h2>Faktur mendekati jatuh tempo</h2>'+(soon.length?'<div class="tw"><table><tr><th>No. faktur</th><th>PT</th><th class=n>Total</th><th>Jatuh tempo</th><th>Status</th></tr>'+soon.sort(function(a,b){return dueInfo(a).d-dueInfo(b).d}).map(function(f){var d=dueInfo(f);return"<tr><td>"+esc(f.no)+"</td><td>"+esc(f.pt)+'</td><td class="n">'+rp(f.total)+"</td><td>"+fd(f.due)+'</td><td><span class="b '+d.c+'">'+d.t+"</span></td></tr>"}).join("")+"</table></div>":'<p class="mu">Tidak ada faktur yang perlu dibayar dalam waktu dekat.</p>')+"</div>";
+h+='<div class="card"><h2>Stok menipis / habis</h2>'+(LOW.length?'<div class="tw"><table><tr><th>Status</th><th>Nama barang</th><th class=n>Sisa</th></tr>'+LOW.slice(0,6).map(function(r){return'<tr class="lk" data-k="'+esc(r.kode)+'" onclick="openItem(this.dataset.k)"><td><span class="b '+(r.lv==2?"r":"a")+'">'+(r.lv==2?"Habis":"Menipis")+"</span></td><td>"+esc(r.nama)+'</td><td class="n">'+r.sisa+" "+esc(r.sat)+"</td></tr>"}).join("")+"</table></div>"+(LOW.length>6?'<p style="margin:8px 0 0"><button class="btn s" onclick="go(\'low\')">Lihat semua ('+LOW.length+")</button></p>":""):'<p class="mu">Semua stok aman.</p>')+"</div></div>";
+h+='<div class="card"><h2>Sisa stok terbesar</h2>'+(top.length?top.map(function(i){return'<div class="bar lk" style="cursor:pointer" data-k="'+esc(i.kode)+'" onclick="openItem(this.dataset.k)"><span class="l" title="'+esc(i.nama)+'">'+esc(i.nama)+'</span><i style="width:'+Math.max(2,i.sisa/mx*60)+'%"></i><b>'+i.sisa+(i.sat?" "+esc(i.sat):"")+'</b></div>'}).join("")+'<p style="margin:8px 0 0"><button class="btn s" onclick="dk(\'items\')">Lihat semua barang ('+its.length+")</button></p>":'<p class="mu">Belum ada data. Mulai dari tab Faktur, atau muat contoh data.</p>')+"</div>";
+$("t-dash").innerHTML=h;$("hsum").textContent=its.length+" jenis barang  |  "+(LOWN?LOWN+" stok menipis atau habis":"stok aman")+"  |  "+un.length+" faktur belum lunas";dfill();
+var a="";if(late.length)a+='<div class="alert">⚠ '+late.length+" faktur sudah lewat jatuh tempo ("+rp(late.reduce(function(x,f){return x+f.total},0))+"). Segera lakukan pembayaran.</div>";
+var near=soon.length-late.length;if(near>0)a+='<div class="alert a">⏰ '+near+" faktur akan jatuh tempo dalam "+WARN+" hari.</div>";
+if(LOWN)a+='<div class="alert'+(LOWH?"":" a")+'" style="cursor:pointer" onclick="go(\'low\')">📉 '+(LOWH?LOWH+" barang stok habis":"")+(LOWH&&LOWN>LOWH?", ":"")+(LOWN>LOWH?(LOWN-LOWH)+" barang stok menipis":"")+". Klik untuk melihat.</div>";
+$("alerts").innerHTML=a}
+function render(){lowCalc();nav();rDash();rLow();rFaktur();rStok()}
+/* ---- impor spreadsheet ---- */
+var IMP=null,AL={pt:["namapt","pt","supplier","namasupplier","pbf"],no:["nomorfaktur","nofaktur","faktur","nofak"],kode:["kodebarang","kode","kodeitem"],nama:["namabarang","barang","namaitem","item"],qty:["qty","jumlah","kuantitas"],harga:["harga","hargasatuan","hargabeli"],ed:["ed","expired","expireddate","kedaluwarsa","tglexpired"],batch:["batch","nobatch","nomorbatch"],total:["totalharga","total","grandtotal"],disc:["disc","diskon","discpct","discpersen"],ppn:["ppn","tax","pajak","taxpersen"],sat:["satuan","sat"],tpo:["notpo","nomortpo","tpo","nopo","nopurchasingorder"],tdo:["notdo","nomortdo","tdo","notransaksi","nomortransaksi","nodo"],q0:["qtyasli"],s0:["satuanasli"],kv:["isipersatuan"],due:["jatuhtempo","tgljatuhtempo","tempo"],tgl:["tanggalfaktur","tanggal","tglfaktur","tgl"]};
+function nk(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g,"")}
+function pnum(v){if(typeof v=="number")return v;var t=String(v==null?"":v).replace(/rp|\s/gi,"");if(!t)return 0;
+if(t.indexOf(".")>=0&&t.indexOf(",")>=0)t=t.replace(/\./g,"").replace(",",".");
+else if(/^-?\d{1,3}(\.\d{3})+$/.test(t))t=t.replace(/\./g,"");
+else t=t.replace(",",".");
+var n=parseFloat(t);return isNaN(n)?0:n}
+function pdate(v){if(v===""||v==null)return"";var y,m,d,r,p=function(n){return("0"+n).slice(-2)};
+if(typeof v=="number"){if(v<20000||v>80000)return null;return new Date(Math.round((v-25569)*864e5)).toISOString().slice(0,10)}
+var t=String(v).trim();
+if(r=/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/.exec(t)){y=+r[1];m=+r[2];d=+r[3]}
+else if(r=/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/.exec(t)){d=+r[1];m=+r[2];y=+r[3];if(y<100)y+=2000}
+else if(r=/^(\d{1,2})[ \-\/.]([A-Za-z]{3,})[ \-\/.,]*(\d{2,4})$/.exec(t)){d=+r[1];m=MON[r[2].slice(0,3).toLowerCase()]||0;y=+r[3];if(y<100)y+=2000}
+else return null;
+if(m<1||m>12||d<1||d>31)return null;return y+"-"+p(m)+"-"+p(d)}
+function readF(inp){var f=inp.files[0],o=$("imsg");if(!f)return;
+if(typeof XLSX=="undefined"){o.className="err";o.textContent="Pembaca spreadsheet gagal dimuat. Periksa koneksi internet lalu muat ulang halaman.";return}
+var r=new FileReader();r.onload=function(e){try{var wb=XLSX.read(e.target.result,{type:"array",raw:true});prep(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:"",raw:true}))}catch(x){o.className="err";o.textContent="File tidak bisa dibaca. Pastikan formatnya .xlsx, .xls, atau .csv."}};
+r.readAsArrayBuffer(f)}
+function prep(rows,oid,off){IMPO=oid||"imsg";var o=$(IMPO);IMP=null;off=off==null?2:off;
+if(!rows.length){o.className="err";o.textContent="File kosong atau tidak ada data di sheet pertama.";return}
+var map={};Object.keys(rows[0]).forEach(function(k){var n=nk(k);for(var f in AL)if(!map[f]&&AL[f].indexOf(n)>=0){map[f]=k;break}});
+var need={pt:"Nama PT",no:"Nomor Faktur",kode:"Kode Barang",nama:"Nama Barang",qty:"Qty",due:"Jatuh Tempo"},ms=[];
+for(var f in need)if(!map[f])ms.push(need[f]);
+if(ms.length){o.className="err";o.textContent="Kolom tidak ditemukan: "+ms.join(", ")+". Periksa judul kolom di baris pertama.";return}
+var good=[],err=[],dup=0,g=function(r,f){return map[f]?r[map[f]]:""},s=function(x){return String(x==null?"":x).trim()};
+rows.forEach(function(r,i){var L={pt:s(g(r,"pt")),no:s(g(r,"no")),kode:s(g(r,"kode")).toUpperCase(),nama:s(g(r,"nama")),qty:pnum(g(r,"qty")),harga:pnum(g(r,"harga")),batch:s(g(r,"batch")),ed:pdate(g(r,"ed")),due:pdate(g(r,"due")),tgl:pdate(g(r,"tgl")),disc:pnum(g(r,"disc")),ppn:pnum(g(r,"ppn")),sat:s(g(r,"sat")),tpo:s(g(r,"tpo")),tdo:s(g(r,"tdo")),q0:pnum(g(r,"q0")),s0:s(g(r,"s0")),kv:pnum(g(r,"kv"))};
+if(!L.pt&&!L.no&&!L.kode&&!L.nama&&!L.qty)return;
+var m=[];if(!L.pt)m.push("nama PT kosong");if(!L.no)m.push("nomor faktur kosong");if(!L.kode)m.push("kode kosong");if(!L.nama)m.push("nama barang kosong");if(!(L.qty>0))m.push("qty kosong/tidak valid");if(!L.due)m.push("jatuh tempo kosong/tidak terbaca");if(L.ed===null)m.push("ED tidak terbaca");if(L.tgl===null)m.push("tanggal faktur tidak terbaca");
+if(m.length){err.push("Baris "+(i+off)+": "+m.join(", "));return}
+if(!L.harga){var t=pnum(g(r,"total"));if(t)L.harga=t/L.qty}
+if(S.faktur.some(function(f){return f.no==L.no&&f.pt==L.pt&&f.kode==L.kode&&f.batch==L.batch})){dup++;return}
+good.push(L)});
+IMP=good;var nf=Object.keys(good.reduce(function(a,L){a[L.pt+"|"+L.no]=1;return a},{})).length;
+o.className="";o.innerHTML="<p><b>"+good.length+" baris siap diimpor</b> ("+nf+" faktur)."+(dup?" "+dup+" baris dilewati karena sudah ada.":"")+"</p>"+(err.length?'<p class="err">'+err.length+" baris bermasalah dan tidak diimpor:<br>"+err.slice(0,8).map(esc).join("<br>")+(err.length>8?"<br>dan "+(err.length-8)+" lainnya":"")+"</p>":"")+(good.length?'<button class="btn" onclick="doImp()">Impor '+good.length+" baris</button>":"")}
+function doImp(){if(!IMP||!IMP.length)return;var gm={},n=0,hc=IMP.some(function(L){return cashQ(L.tgl||iso(today()),L.due)});
+IMP.forEach(function(L){var k=L.pt+"|"+L.no,gid=gm[k]||(gm[k]=uid());adopt(L.kode,L.nama);
+var f={id:uid(),gid:gid,tgl:L.tgl||iso(today()),pt:L.pt,no:L.no,kode:L.kode,nama:L.nama,qty:L.qty,harga:L.harga,batch:L.batch,ed:L.ed||"",due:L.due,lunas:cashQ(L.tgl||iso(today()),L.due),sat:L.sat,tpo:L.tpo,tdo:L.tdo,q0:L.q0,s0:L.s0,kv:L.kv,disc:L.disc,ppn:L.ppn,total:LT(L)};
+S.faktur.push(f);S.moves.push({id:uid(),fid:f.id,tgl:f.tgl,kode:f.kode,nama:f.nama,ket:KET(f),sat:f.sat||"",masuk:f.qty,keluar:0});n++});
+save();IMP=null;$("imp").value="";$("pst").value="";$("pprev").innerHTML="";var o=$(IMPO);o.className="ok";o.textContent=n+" baris berhasil diimpor ke faktur dan kartu stok."+(hc?" Faktur cash otomatis berstatus lunas.":"");render()}
+/* ---- tempel dari website ---- */
+var IMPO="imsg",PS=null,MON={jan:1,feb:2,mar:3,apr:4,mei:5,may:5,jun:6,jul:7,agu:8,aug:8,sep:9,okt:10,oct:10,nov:11,des:12,dec:12};
+var FL=[["","(abaikan kolom)"],["pt","Nama PT"],["no","Nomor Faktur"],["kode","Kode Barang"],["nama","Nama Barang"],["qty","Qty"],["harga","Harga"],["ed","ED"],["batch","Batch"],["total","Total Harga"],["due","Jatuh Tempo"],["tgl","Tanggal Faktur"],["disc","Disc (%)"],["ppn","PPN (%)"],["sat","Satuan"],["tpo","No. TPO"],["tdo","No. TDO"]];
+function lab(f){for(var i=0;i<FL.length;i++)if(FL[i][0]==f)return FL[i][1];return f}
+function hf(c){var n=nk(c);if(!n)return"";for(var f in AL)if(AL[f].indexOf(n)>=0)return f;return""}
+function splitL(l,sep){return(sep=="sp"?l.split(/\s{2,}/):l.split(sep)).map(function(x){return x.trim().replace(/^"|"$/g,"")})}
+function readP(){var o=$("pmsg"),pv=$("pprev");pv.innerHTML="";o.textContent="";o.className="";PS=null;
+var L=$("pst").value.split(/\r?\n/).filter(function(x){return x.trim()});
+if(!L.length){o.className="err";o.textContent="Tempel datanya dulu di kotak di atas.";return}
+if(isMT($("pst").value)){o.className="err";o.textContent="Ini data Mutasi Barang (barang keluar). Tempel di tab Kartu stok.";return}
+if(isDO($("pst").value)){readDO($("pst").value);return}
+var R=null,seps=["\t",";","|","sp",","],hd=L.slice(0,5);
+seps.forEach(function(sp){if(R)return;var cs=hd.map(function(l){return splitL(l,sp).length}),mn=Math.min.apply(null,cs),mx=Math.max.apply(null,cs);if(mn>=2&&mx-mn<=1)R=L.map(function(l){return splitL(l,sp)})});
+if(!R){var k=0;while(k<L.length&&hf(L[k]))k++;
+if(k>=4){var rest=L.slice(k);if(rest.length%k){o.className="err";o.textContent="Data tersalin satu sel per baris, tetapi jumlah barisnya ("+rest.length+") tidak habis dibagi jumlah kolom ("+k+"). Biasanya ada sel kosong yang hilang saat disalin. Coba salin sebagian dulu, atau kirim contoh hasil salinannya ke Claude di chat.";return}
+R=[L.slice(0,k)];for(var i=0;i<rest.length;i+=k)R.push(rest.slice(i,i+k))}}
+if(!R){o.className="err";o.textContent="Pemisah kolom tidak terdeteksi. Salin ulang termasuk baris judul, atau kirim contoh hasil salinannya ke Claude di chat.";return}
+var n=Math.max.apply(null,R.map(function(r){return r.length})),hm=R[0].map(hf),seen={};
+hm=hm.map(function(f){if(f&&seen[f])return"";seen[f]=1;return f});
+var has=hm.filter(Boolean).length>=3,data=(has?R.slice(1):R).map(function(r){while(r.length<n)r.push("");return r}),dflt=["pt","no","kode","nama","qty","harga","ed","batch","total","due"],map=[];
+for(var c=0;c<n;c++)map.push(has?(hm[c]||""):(dflt[c]||""));
+if(!data.length){o.className="err";o.textContent="Hanya ada baris judul, tidak ada data.";return}
+PS={data:data,map:map,has:has,n:n};
+var h="<p class=\"mu\">Terbaca "+data.length+" baris dan "+n+" kolom. "+(has?"Judul kolom dikenali.":"Judul kolom tidak ditemukan, pilih arti tiap kolom di bawah.")+" Periksa pilihan di atas tiap kolom.</p><div class=\"tw\"><table><tr>";
+for(var c=0;c<n;c++)h+="<th><select onchange=\"PS.map["+c+"]=this.value\">"+FL.map(function(x){return'<option value="'+x[0]+'"'+(x[0]==map[c]?" selected":"")+">"+x[1]+"</option>"}).join("")+"</select></th>";
+h+="</tr>"+data.slice(0,5).map(function(r){return"<tr>"+r.map(function(x){return"<td>"+esc(x)+"</td>"}).join("")+"</tr>"}).join("")+"</table></div>"+(data.length>5?'<p class="mu" style="font-size:13px">Menampilkan 5 baris pertama dari '+data.length+'.</p>':"")+'<p style="margin:10px 0 0"><button class="btn" onclick="doP()">Periksa data</button></p>';
+pv.innerHTML=h}
+function doP(){var o=$("pmsg");if(!PS)return;if(PS.mode=="do"){doDO();return}var used={};PS.map.forEach(function(f){if(f)used[f]=1});
+var need=["pt","no","kode","nama","qty","due"],ms=need.filter(function(f){return!used[f]}).map(lab);
+if(ms.length){o.className="err";o.textContent="Belum ada kolom untuk: "+ms.join(", ")+". Pilih di dropdown atas kolom yang sesuai.";return}
+var rows=PS.data.map(function(r){var ob={};PS.map.forEach(function(f,i){if(f)ob[lab(f)]=r[i]});return ob});
+prep(rows,"pmsg",PS.has?2:1)}
+/* ---- format Data Transaksi Delivery ---- */
+function isDO(t){return/Data Barang/i.test(t)&&/Faktur/i.test(t)&&/Supplier/i.test(t)&&/Kode Barang/i.test(t)}
+function lv(lines,re){for(var i=0;i<lines.length;i++)if(re.test(lines[i])){var r=lines[i].indexOf(":")>=0?lines[i].replace(/^[^:]*:/,"").trim():"";if(r)return r;for(var j=i+1;j<lines.length;j++)if(lines[j].trim())return lines[j].trim()}return""}
+function readDO(t){var o=$("pmsg"),pv=$("pprev");pv.innerHTML="";o.textContent="";o.className="";PS=null;
+var lines=t.split(/\r?\n/),sup=lv(lines,/^\s*Supplier\s*:/i),fak=lv(lines,/^\s*No\.?\s*Faktur\s*:/i),tg=lv(lines,/^\s*Tanggal\.?\s*Transaksi\s*:/i),du=pdate((lv(lines,/^\s*Tgl\.?\s*Jatuh\s*Tempo/i).match(/\d{1,2}\/\d{1,2}\/\d{4}/)||[""])[0])||"",jp=lv(lines,/^\s*Jenis\s*Pembayaran/i),tdo=lv(lines,/^\s*No\.?\s*Transaksi\s*:/i),tpo=lv(lines,/^\s*No\.?\s*Purchasing\s*Order\s*:/i),hi=-1;
+lines.forEach(function(l,i){if(hi<0&&/Kode Barang/i.test(l)&&/Nama Barang/i.test(l))hi=i});
+var tk=lines.slice(hi+1).join("\n").split(/[\t\r\n]+/).map(function(x){return x.trim()}).filter(Boolean),ge=-1;
+tk.forEach(function(x,i){if(ge<0&&/^GRANDTOTAL/i.test(x))ge=i});
+var gtv=0;if(ge>=0){var mo=tk.slice(ge).filter(function(x){return/^[\d.]+,\d{2}$/.test(x)});gtv=mo.length?pnum(mo[mo.length-1]):0;tk=tk.slice(0,ge)}
+var cs=[];tk.forEach(function(x,i){if(/^\(.*=.*\)$/.test(x)&&i>=4)cs.push(i)});
+var its=[];cs.forEach(function(c,ix){var end=ix+1<cs.length?cs[ix+1]-4:tk.length,r=tk.slice(c+1,end);if(r.length<9)return;
+var tail=r.slice(-6),mid=r.slice(0,r.length-6),di=-1;mid.forEach(function(x,i){if(di<0&&i>=3&&/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(x))di=i});
+var cv=/\(\s*1\s*[^=)]+?=\s*([\d.,]+)\s*([^)]+?)\s*\)/.exec(tk[c]),kv=cv&&pnum(cv[1])>0?pnum(cv[1]):1,q0=pnum(r[1]),h0=pnum(r[2]);
+its.push({kode:tk[c-3],nama:tk[c-2],sat:cv?cv[2].trim():tk[c-1],s0:tk[c-1],kv:kv,q0:q0,qty:q0*kv,harga:h0/kv,ed:di>=0?pdate(mid[di]):"",batch:mid[di>=0?di+1:3]||"",disc:pnum(tail[0]),ppn:pnum(tail[3])})});
+if(!sup||!fak||!its.length){o.className="err";o.textContent="Data dikenali sebagai Transaksi Delivery, tetapi "+(!sup?"Supplier":!fak?"No. Faktur":"daftar barang")+" tidak terbaca. Kirim contoh hasil salinannya ke Claude di chat.";return}
+var tx=(tg.match(/\d{1,2}\/\d{1,2}\/\d{4}/)||[""])[0],sum=its.reduce(function(a,x){return a+LT(x)},0);
+if(!du&&/tunai|cash/i.test(jp))du=pdate(tx)||iso(today());
+PS={mode:"do",its:its,sup:sup,fak:fak,tx:tx,due:du,tdo:tdo,tpo:tpo};
+var ok=!gtv||Math.abs(sum-gtv)<1;
+pv.innerHTML='<p><b>Format Transaksi Delivery dikenali.</b> Supplier: <b>'+esc(sup)+"</b> | No. Faktur: <b>"+esc(fak)+"</b> | Tanggal: <b>"+esc(tx)+"</b> | TDO: <b>"+esc(tdo||"-")+"</b> | TPO: <b>"+esc(tpo||"-")+'</b></p><div class="tw"><table><tr><th>Kode</th><th>Nama barang</th><th class=n>Qty DO</th><th class=n>Qty satuan terkecil</th><th class=n>Harga / satuan terkecil</th><th class=n>Disc %</th><th>ED</th><th>Batch</th><th class=n>PPN %</th><th class=n>Total</th></tr>'+its.map(function(x){return"<tr><td>"+esc(x.kode)+"</td><td>"+esc(x.nama)+'</td><td class="n">'+x.q0+" "+esc(x.s0)+(x.kv>1?" (isi "+x.kv+")":"")+'</td><td class="n"><b>'+x.qty+" "+esc(x.sat)+'</b></td><td class="n">'+rp2(x.harga)+'</td><td class="n">'+x.disc+"</td><td>"+fd(x.ed)+"</td><td>"+esc(x.batch)+'</td><td class="n">'+x.ppn+'</td><td class="n">'+rp(LT(x))+"</td></tr>"}).join("")+'</table></div><p class="'+(ok?"ok":"err")+'">Total dihitung '+rp(sum)+(gtv?" | Grand total di data "+rp(gtv)+(ok?" (cocok)":" (BERBEDA, periksa diskon/PPN)"):"")+'</p><p class="mu" style="font-size:13px">'+(du?"Jatuh tempo terbaca dari data (pembayaran "+esc(jp||"-")+", termin "+TL[termOf({tgl:pdate(tx)||iso(today()),due:du})]+"). Periksa kembali sebelum impor.":"Data ini tidak memuat jatuh tempo. Isi tanggalnya, atau isi jumlah hari tempo (dihitung dari tanggal transaksi).")+'</p><div class="grid" style="max-width:520px"><div><label>Jatuh tempo</label><input type="date" id="p_due" value="'+du+'"></div><div><label>atau tempo (hari)</label><input type="number" id="p_days" min="0" placeholder="mis. 30"></div></div><p style="margin:10px 0 0"><button class="btn" onclick="doP()">Periksa data</button></p>'}
+function doDO(){var o=$("pmsg"),P=PS,due=$("p_due").value,dy=+$("p_days").value,tx=pdate(P.tx);
+if(!due&&dy>0&&tx){var d=new Date(tx+"T00:00:00");d.setDate(d.getDate()+dy);due=iso(d)}
+if(!due){o.className="err";o.textContent="Isi jatuh tempo dulu (tanggal, atau jumlah hari tempo).";return}
+var rows=P.its.map(function(x){var ob={};ob[lab("pt")]=P.sup;ob[lab("no")]=P.fak;ob[lab("kode")]=x.kode;ob[lab("nama")]=x.nama;ob[lab("qty")]=x.qty;ob[lab("harga")]=x.harga;ob[lab("ed")]=x.ed;ob[lab("batch")]=x.batch;ob[lab("due")]=due;ob[lab("tgl")]=tx;ob[lab("disc")]=x.disc;ob[lab("ppn")]=x.ppn;ob[lab("sat")]=x.sat;ob[lab("tpo")]=P.tpo;ob[lab("tdo")]=P.tdo;ob["Qty Asli"]=x.q0;ob["Satuan Asli"]=x.s0;ob["Isi per Satuan"]=x.kv;return ob});
+prep(rows,"pmsg",1)}
+var rp2=function(n){return"Rp "+(+n).toLocaleString("id-ID",{maximumFractionDigits:2})};
+function KET(f){return"Faktur "+f.no+" - "+f.pt+(f.batch?" (Batch "+f.batch+")":"")+(f.tdo?" | TDO "+f.tdo:"")+(f.tpo?" | TPO "+f.tpo:"")+(f.kv>1?" | "+f.q0+" "+f.s0+" x "+f.kv+" = "+f.qty+" "+f.sat:"")}
+/* ---- mutasi barang (barang keluar) ---- */
+var MT=null,MTG=null;
+function isMT(t){return/Mutasi Barang/i.test(t)&&/Stok Unit Peminta/i.test(t)}
+function readMT(){var t=$("mst").value,o=$("mmsg"),pv=$("mprev");pv.innerHTML="";o.textContent="";o.className="";MT=null;MTG=null;
+if(!t.trim()){o.className="err";o.textContent="Tempel data mutasi dulu di kotak di atas.";return}
+if(!isMT(t)){o.className="err";o.textContent="Data tidak dikenali sebagai Mutasi Barang. Salin seluruh halaman mutasi, dari judul sampai GRANDTOTAL.";return}
+var lines=t.split(/\r?\n/),lc=function(re){var v=lv(lines,re);return/\*\s*$/.test(v)?"":v},
+tmb=lc(/^\s*No\.?\s*Transaksi\s*\*/i),tom=lc(/^\s*No\.?\s*Order\s*Mutasi/i),tg=lc(/^\s*Tgl\.?\s*Transaksi/i),asal=lc(/^\s*Lokasi\s*Awal\s*Order/i),tuj=lc(/^\s*Lokasi\s*Tujuan\s*Stok/i),ket=lc(/^\s*Keterangan\s*\*/i),hi=-1;
+lines.forEach(function(l,i){if(hi<0&&/Kode Barang/i.test(l)&&/Qty Mutasi/i.test(l))hi=i});
+var tk=lines.slice(hi+1).join("\n").split(/[\t\r\n]+/).map(function(x){return x.trim()}).filter(Boolean),ge=-1,mo=[];
+tk.forEach(function(x,i){if(ge<0&&/^GRANDTOTAL/i.test(x))ge=i});
+if(ge>=0){mo=tk.slice(ge).filter(function(x){return/^-?[\d.]+,\d{2}$/.test(x)});tk=tk.slice(0,ge)}
+var cs=[];tk.forEach(function(x,i){if(/^\(\s*Stok Unit Peminta/i.test(x)&&i>=2)cs.push(i)});
+var all=[];cs.forEach(function(c,ix){var end=ix+1<cs.length?cs[ix+1]-2:tk.length,r=tk.slice(c+2,end),n=r.length;if(n<3)return;
+all.push({kode:tk[c-2].toUpperCase(),nama:tk[c-1],sat:tk[c+1],qo:n>=4?pnum(r[0]):0,qm:pnum(r[n-3]),hpp:pnum(r[n-2]),tot:pnum(r[n-1])})});
+if(!all.length){o.className="err";o.textContent="Daftar barang tidak terbaca. Kirim contoh hasil salinannya ke Claude di chat.";return}
+var real=all.filter(function(x){return x.qm>0}),sq=all.reduce(function(a,x){return a+x.qm},0),st=all.reduce(function(a,x){return a+x.tot},0),
+ok=!mo.length||(Math.abs(sq-pnum(mo[0]))<.5&&Math.abs(st-pnum(mo[mo.length-1]))<1);
+MT={rows:real,tmb:tmb,tom:tom,tx:(tg.match(/\d{1,2}\/\d{1,2}\/\d{4}/)||[""])[0],asal:asal,tuj:tuj,ket:ket};
+var h='<p>No. Transaksi: <b>'+esc(tmb||"-")+"</b> | No. Order Mutasi: <b>"+esc(tom||"-")+"</b> | Tanggal: <b>"+esc(MT.tx)+"</b><br>Dari/untuk: <b>"+esc(asal||"-")+"</b> | Lokasi tujuan stok: <b>"+esc(tuj||"-")+"</b>"+(ket?" | Keterangan: <b>"+esc(ket)+"</b>":"")+"</p><p><b>"+real.length+" dari "+all.length+" barang akan diimpor.</b> "+(all.length-real.length)+" barang dilewati karena Qty Mutasi 0 (tidak direalisasi).</p>";
+if(!real.length){pv.innerHTML=h;o.className="err";o.textContent="Semua barang Qty Mutasi 0, tidak ada yang diimpor.";return}
+h+='<div class="tw"><table><tr><th>Kode</th><th>Nama barang</th><th>Satuan</th><th class=n>Qty order</th><th class=n>Qty mutasi</th><th class=n>Hpp</th><th class=n>Total</th></tr>'+real.map(function(x){return"<tr><td>"+esc(x.kode)+"</td><td>"+esc(x.nama)+"</td><td>"+esc(x.sat)+'</td><td class="n">'+x.qo+'</td><td class="n"><b>'+x.qm+'</b></td><td class="n">'+rp2(x.hpp)+'</td><td class="n">'+rp(x.tot)+"</td></tr>"}).join("")+"</table></div>"+(mo.length?'<p class="'+(ok?"ok":"err")+'">Total qty mutasi '+sq+", total nilai "+rp(st)+(ok?" (cocok dengan GRANDTOTAL)":" (BERBEDA dengan GRANDTOTAL, periksa data)")+"</p>":"")+'<div style="max-width:360px"><label>Arah di kartu stok</label><select id="m_dir"><option value="keluar">Barang keluar (stok berkurang)</option><option value="masuk">Barang masuk (stok bertambah)</option></select></div><p class="mu" style="font-size:13px">Dianggap barang keluar karena Purchasing Basement mengirim stok ke unit peminta. Ubah jika arahnya sebaliknya.</p><p style="margin:10px 0 0"><button class="btn" onclick="doMT()">Periksa data</button></p>';
+pv.innerHTML=h}
+function doMT(){var o=$("mmsg"),P=MT;if(!P)return;var dir=$("m_dir").value||"keluar",its=items(),tgl=pdate(P.tx)||iso(today()),good=[],err=[],wr=[],dup=0;
+P.rows.forEach(function(x){var it=findIt(its,x),nm=x.kode+" "+x.nama;
+if(P.tmb&&S.moves.some(function(v){return v.ref==P.tmb&&v.kode==x.kode})){dup++;return}
+if(dir=="keluar"){if(!it){err.push(nm+": kode belum ada di stok (belum pernah masuk lewat faktur)");return}
+if(x.qm>it.sisa){err.push(nm+": stok kurang (sisa "+it.sisa+", mutasi "+x.qm+")");return}
+var bal=S.moves.filter(function(v){return v.kode==it.kode&&v.tgl<=tgl}).reduce(function(a,v){return a+v.masuk-v.keluar},0);
+if(bal<x.qm)wr.push(nm+": tanggal mutasi lebih awal dari tanggal barang masuk")}
+if(it&&it.sat&&x.sat&&it.sat.toLowerCase()!=x.sat.toLowerCase())wr.push(nm+": satuan stok "+it.sat+", satuan mutasi "+x.sat);
+good.push({x:x,nama:it?it.nama:x.nama})});
+MTG={good:good,dir:dir,tgl:tgl};
+o.className="";o.innerHTML="<p><b>"+good.length+" barang siap diimpor sebagai barang "+dir+".</b>"+(dup?" "+dup+" barang dilewati karena sudah pernah diimpor.":"")+"</p>"+(err.length?'<p class="err">'+err.length+" barang tidak bisa diimpor:<br>"+err.slice(0,8).map(esc).join("<br>")+"</p>":"")+(wr.length?'<p style="color:var(--am)">Perhatian:<br>'+wr.slice(0,6).map(esc).join("<br>")+"</p>":"")+(good.length?'<button class="btn" onclick="impMT()">Impor '+good.length+" barang</button>":"")}
+function impMT(){if(!MTG||!MTG.good.length)return;var P=MT,d=MTG.dir;
+MTG.good.forEach(function(g){var x=g.x;adopt(x.kode,x.nama);S.moves.push({id:uid(),tgl:MTG.tgl,kode:x.kode,nama:g.nama,sat:x.sat,ref:P.tmb,masuk:d=="masuk"?x.qm:0,keluar:d=="keluar"?x.qm:0,ket:"Mutasi "+P.tmb+" | Order "+P.tom+(d=="keluar"?" | ke ":" | dari ")+(P.asal||"-")+(P.ket?" | "+P.ket:"")})});
+var n=MTG.good.length;save();MT=null;MTG=null;$("mst").value="";$("mprev").innerHTML="";var o=$("mmsg");o.className="ok";o.textContent=n+" barang berhasil dicatat di kartu stok.";render()}
+/* ---- impor stok saat ini ---- */
+var SD=null,SP=null,SA={nama:AL.nama,qty:["qty","jumlah","kuantitas","stok","sisa","sisastok","stoksisa","saldoakhir","stock","qtyterkecil","stokakhir","stoksaatini","stoksekarang","saldo"],kode:AL.kode,sat:AL.sat};
+function pq(v){var t=String(v==null?"":v).replace(/\s/g,"");if(/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(t))return parseFloat(t.replace(/,/g,""));return pnum(t)}
+function nrm(n){return nk(String(n).replace(/#/g,""))}
+function sf(c){var n=nk(c);if(!n)return"";for(var f in SA)if(SA[f].indexOf(n)>=0)return f;return""}
+function findIt(its,x){return its.filter(function(k){return k.kode==x.kode})[0]||its.filter(function(k){return/^TMP-/.test(k.kode)&&nrm(k.nama)==nrm(x.nama)})[0]}
+function adopt(k,n){if(!k||/^TMP-/.test(k))return;var nn=nrm(n),tmp={};
+S.moves.forEach(function(m){if(/^TMP-/.test(m.kode)&&nrm(m.nama)==nn)tmp[m.kode]=1});
+S.moves.forEach(function(m){if(tmp[m.kode])m.kode=k})}
+function grid(t){var L=t.split(/\r?\n/).filter(function(x){return x.trim()});if(!L.length)return null;var R=null,hd=L.slice(0,5);
+["\t",";","|","sp",","].forEach(function(sp){if(R)return;var cs=hd.map(function(l){return splitL(l,sp).length}),mn=Math.min.apply(null,cs),mx=Math.max.apply(null,cs);if(mn>=2&&mx-mn<=1)R=L.map(function(l){return splitL(l,sp)})});
+if(!R){var ms=L.map(function(l){return/^(.*\S)\s+(-?[\d.,]+)$/.exec(l.trim())});if(ms.every(Boolean))R=ms.map(function(m){return[m[1],m[2]]})}
+return R}
+function readS(inp){var o=$("smsg"),pv=$("sprev"),f=inp&&inp.files&&inp.files[0];SD=null;SP=null;pv.innerHTML="";o.textContent="";o.className="";
+if(f){if(typeof XLSX=="undefined"){o.className="err";o.textContent="Pembaca spreadsheet gagal dimuat. Muat ulang halaman.";return}
+var r=new FileReader();r.onload=function(e){try{var wb=XLSX.read(e.target.result,{type:"array",raw:true});procS(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:"",raw:true}))}catch(x){o.className="err";o.textContent="File tidak bisa dibaca. Pastikan formatnya .xlsx, .xls, atau .csv."}};r.readAsArrayBuffer(f);return}
+var t=$("sst").value;if(!t.trim()){o.className="err";o.textContent="Pilih file atau tempel datanya dulu.";return}
+procS(grid(t))}
+function procS(R){var o=$("smsg"),pv=$("sprev");
+R=(R||[]).filter(function(r){return r.some(function(c){return String(c).trim()!==""})});
+if(!R.length){o.className="err";o.textContent="Data tidak terbaca. Pastikan ada dua kolom: nama barang dan qty.";return}
+var hm=R[0].map(sf),seen={};hm=hm.map(function(f){if(f&&seen[f])return"";seen[f]=1;return f});
+var has=hm.indexOf("nama")>=0&&hm.indexOf("qty")>=0,map,data;
+if(has){map=hm;data=R.slice(1)}else{if(!/^-?[\d.,]+$/.test(String(R[0][1]==null?"":R[0][1]).replace(/\s/g,""))){o.className="err";o.textContent="Judul kolom tidak dikenali. Pakai judul Nama Barang dan Qty, atau tanpa judul dengan kolom pertama nama barang dan kolom kedua qty.";return}map=["nama","qty","sat"];data=R}
+var rows=[],bad=[];
+data.forEach(function(r,i){var ob={};map.forEach(function(f,c){if(f)ob[f]=String(r[c]==null?"":r[c]).trim()});
+var nama=ob.nama||"",q=pq(ob.qty),ln=i+(has?2:1);if(!nama&&!ob.qty)return;
+if(!nama){bad.push("Baris "+ln+": nama barang kosong");return}
+if(!ob.qty||!/^-?[\d.,\s]+$/.test(ob.qty)||q<0){bad.push("Baris "+ln+": qty kosong atau tidak valid ("+nama+")");return}
+rows.push({nama:nama,qty:q,sat:ob.sat||"",kode:(ob.kode||"").toUpperCase()})});
+if(!rows.length){o.className="err";o.textContent="Tidak ada baris yang valid."+(bad.length?" "+bad.slice(0,3).join("; "):"");return}
+SD={rows:rows};
+pv.innerHTML="<p><b>"+rows.length+" barang terbaca.</b></p>"+(bad.length?'<p class="err">'+bad.length+" baris bermasalah dan dilewati:<br>"+bad.slice(0,6).map(esc).join("<br>")+"</p>":"")+'<p style="margin:0"><button class="btn" onclick="doS()">Periksa data</button></p>'}
+function nextTmp(){var mx=0;S.moves.forEach(function(m){var r=/^TMP-(\d+)$/.exec(m.kode);if(r&&+r[1]>mx)mx=+r[1]});return mx+1}
+function doS(){var o=$("smsg"),P=SD;if(!P)return;var its=items(),mode=$("s_mode").value||"sesuai",tgl=$("s_tgl").value||iso(today()),n=nextTmp(),seen={},plan=[],view=[],same=0,dup=[],wr=[];
+P.rows.forEach(function(x){var key=x.kode?"K"+x.kode:"N"+nrm(x.nama);if(seen[key]){dup.push(x.nama);return}seen[key]=1;
+var it=x.kode?its.filter(function(k){return k.kode==x.kode})[0]:its.filter(function(k){return nrm(k.nama)==nrm(x.nama)})[0];
+var kode=it?it.kode:(x.kode||"TMP-"+("00"+(n++)).slice(-3)),cur=it?it.sisa:0,diff=mode=="tambah"?x.qty:x.qty-cur,sat=x.sat||(it&&it.sat)||"";
+if(it&&it.sat&&x.sat&&it.sat.toLowerCase()!=x.sat.toLowerCase())wr.push(x.nama+": satuan stok "+it.sat+", satuan file "+x.sat);
+var row={kode:kode,nama:it?it.nama:x.nama,sat:sat,cur:cur,qty:x.qty,diff:diff,isNew:!it,tmp:!it&&!x.kode};
+view.push(row);if(!diff){same++;return}
+row.ket=!it?"Stok awal":mode=="tambah"?"Stok awal (tambahan)":"Penyesuaian stok: "+cur+" menjadi "+x.qty;plan.push(row)});
+SP={plan:plan,tgl:tgl};
+var nb=plan.filter(function(r){return r.isNew}).length,nt=plan.filter(function(r){return r.tmp}).length;
+var rows=view.slice().sort(function(a,b){return(b.diff?1:0)-(a.diff?1:0)}).slice(0,300).map(function(r){return"<tr><td>"+esc(r.nama)+"</td><td>"+esc(r.kode)+"</td><td>"+esc(r.sat)+'</td><td class="n">'+r.cur+'</td><td class="n">'+r.qty+'</td><td><span class="b '+(!r.diff?"g":r.diff>0?"a":"r")+'">'+(!r.diff?"Tidak berubah":r.diff>0?"Masuk +"+r.diff:"Keluar "+Math.abs(r.diff))+"</span></td></tr>"}).join("");
+o.className="";o.innerHTML='<div class="tw"><table><tr><th>Nama barang</th><th>Kode</th><th>Satuan</th><th class=n>Stok tercatat</th><th class=n>Stok di file</th><th>Perubahan</th></tr>'+rows+"</table></div>"+(view.length>300?'<p class="mu" style="font-size:13px">Menampilkan 300 baris pertama (yang berubah ditampilkan lebih dulu) dari '+view.length+".</p>":"")+"<p><b>"+plan.length+" barang akan dicatat</b> ("+nb+" barang baru, "+(plan.length-nb)+" disesuaikan), "+same+" tidak berubah.</p>"+(nt?'<p class="mu" style="font-size:13px">'+nt+" barang baru belum punya kode, diberi kode sementara TMP-xxx. Kode ini otomatis diganti saat faktur atau mutasi dengan kode asli dan nama yang sama diimpor.</p>":"")+(mode=="tambah"?'<p style="color:var(--am)">Mode tambah: mengimpor file yang sama dua kali akan menggandakan stok.</p>':"")+(dup.length?'<p class="err">'+dup.length+" baris ganda di file (kode atau nama sama) dilewati: "+dup.slice(0,4).map(esc).join(", ")+"</p>":"")+(wr.length?'<p style="color:var(--am)">Perhatian:<br>'+wr.slice(0,5).map(esc).join("<br>")+"</p>":"")+(plan.length?'<button class="btn" onclick="impS()">Impor '+plan.length+" barang</button>":"")}
+function impS(){if(!SP||!SP.plan.length)return;
+SP.plan.forEach(function(r){S.moves.push({id:uid(),tgl:SP.tgl,kode:r.kode,nama:r.nama,sat:r.sat,ket:r.ket,masuk:r.diff>0?r.diff:0,keluar:r.diff<0?-r.diff:0})});
+var n=SP.plan.length;save();SD=null;SP=null;$("sst").value="";$("sprev").innerHTML="";try{$("sfile").value=""}catch(e){}var o=$("smsg");o.className="ok";o.textContent=n+" barang berhasil dicatat di kartu stok.";render()}
+function reset(){if(confirm("Hapus semua faktur dan kartu stok?")){S={faktur:[],moves:[]};ens();save();render()}}
+function demo(){var t=today(),p=function(n){var d=new Date(t);d.setDate(d.getDate()+n);return iso(d)};
+var L=[["PT Kimia Farma","KF-0912","PCT500","Paracetamol 500mg",200,1200,"B2401",90,3],["PT Kimia Farma","KF-0912","AMX500","Amoxicillin 500mg",100,2500,"A7731",400,3],["PT Indofarma","IF-2210","VTC100","Vitamin C 100mg",150,900,"V118",60,-2],["PT Enseval","EN-5531","OBH120","OBH Sirup 120ml",50,8500,"O905",300,20]];
+L.forEach(function(r,i){var f={id:uid(),tgl:p(-15+i),pt:r[0],no:r[1],kode:r[2],nama:r[3],qty:r[4],harga:r[5],batch:r[6],ed:p(r[7]),due:p(r[8]),lunas:false,total:r[4]*r[5]};
+S.faktur.push(f);S.moves.push({id:uid(),fid:f.id,tgl:f.tgl,kode:f.kode,nama:f.nama,ket:"Faktur "+f.no+" - "+f.pt+" (Batch "+f.batch+")",masuk:f.qty,keluar:0})});
+S.moves.push({id:uid(),tgl:p(-5),kode:"PCT500",nama:"Paracetamol 500mg",ket:"Penjualan",masuk:0,keluar:60},{id:uid(),tgl:p(-3),kode:"VTC100",nama:"Vitamin C 100mg",ket:"Penjualan",masuk:0,keluar:40});
+save();render()}
+$("f_tgl").value=$("o_tgl").value=$("s_tgl").value=iso(today());addRow();render();
+</script></body></html>
